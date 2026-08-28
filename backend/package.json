@@ -1,0 +1,20 @@
+{
+  "name": "resume-filler",
+  "version": "0.1.0",
+  "description": "通过 CDP 连接 Edge 浏览器，智能填写企业招聘网站简历表单",
+  "type": "module",
+  "scripts": {
+    "connect": "node scripts/connect.mjs",
+    "read-form": "node scripts/read-form.mjs",
+    "validate-resume": "node ../scripts/validate-resume-json.mjs",
+    "feedback": "node ../scripts/resume-feedback.mjs",
+    "map": "node scripts/map-resume.mjs",
+    "fill-resume": "node scripts/fill-resume.mjs",
+    "fill": "node scripts/fill-field.mjs",
+    "test": "node scripts/tests/adapters.test.mjs && node scripts/tests/semantic-mapper.test.mjs && node scripts/tests/feishu-feedback.test.mjs",
+    "dev": "msedge --remote-debugging-port=9222 --user-data-dir=\".edge-profile\""
+  },
+  "dependencies": {
+    "playwright-core": "^1.40.0"
+  }
+}

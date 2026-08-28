@@ -1,0 +1,18 @@
+{
+  "domain": "hr-campus.vivo.com",
+  "formSignature": "beisen-phoenix-v1",
+  "framework": "beisen-phoenix",
+  "mappedAt": "2026-08-28",
+  "fingerprints": [
+    { "selector": ".form-part", "minCount": 3 },
+    { "selector": "[class*='phoenix']", "minCount": 5 }
+  ],
+  "reader": {
+    "sectionContainer": ".form-part",
+    "fieldSelector": ".form-item",
+    "labelSelector": [".form-item__label", "label"],
+    "controlSelector": "input:not([type='hidden']), textarea, select, [role='combobox'], .phoenix-radio-group__radioItem",
+    "selectSelector": [".phoenix-select", ".phoenix-cascader"],
+    "dateSelector": [".phoenix-date-picker", "[class*='datePicker']"]
+  }
+}

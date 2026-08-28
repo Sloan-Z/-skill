@@ -1,0 +1,29 @@
+{
+  "domain": "zhaopin.meituan.com",
+  "formSignature": "meituan-mtd-resume-v1",
+  "framework": "meituan-mtd",
+  "mappedAt": "2026-08-28",
+  "fingerprints": [
+    { "selector": ".resume_main .mtd-form-item", "minCount": 5 },
+    { "selector": ".model_edit", "minCount": 3 }
+  ],
+  "reader": {
+    "fieldSelector": ".mtd-form-item",
+    "labelSelector": [".mtd-form-item-body > .label", ".mtd-form-item-label", ".mtd-form-item-body > label", "label", "[class*='label']"],
+    "controlSelector": "input:not([type='hidden']), textarea, select, [role='combobox'], [contenteditable='true']",
+    "selectSelector": [".mtd-select", ".mtd-cascader", ".mtd-picker"],
+    "dateSelector": [".mtd-date-picker", "[class*='date-picker']"],
+    "dateRangeSelector": [".mtd-date-range-picker", "[class*='range-picker']"],
+    "sections": [
+      { "kind": "attachment", "title": "简历附件", "selector": ".upload_resume_edit" },
+      { "kind": "basic", "title": "基本信息", "selector": ".base_info_edit, .basic_info_edit, [class*='basic_info'][class*='model_edit']" },
+      { "kind": "education", "title": "教育经历", "selector": ".edu_experience_edit", "recordSelector": ":scope > .model_list", "addAction": { "text": "添加教育经历" } },
+      { "kind": "language", "title": "语言水平", "selector": ".language_level_edit, [class*='language'][class*='model_edit']", "recordSelector": ":scope > .model_list", "addAction": { "text": "添加语言水平" } },
+      { "kind": "work", "title": "工作/实习经历", "selector": ".work_experience_edit", "recordSelector": ":scope > .model_list", "addAction": { "text": "添加工作/实习经历" } },
+      { "kind": "project", "title": "项目经历", "selector": ".project_experience_edit", "recordSelector": ":scope > .model_list", "addAction": { "text": "添加项目经历" } },
+      { "kind": "campus", "title": "校园经历", "selector": ".campus_experience_edit", "recordSelector": ":scope > .model_list", "addAction": { "text": "添加校园经历" } },
+      { "kind": "awards", "title": "荣誉", "selector": ".honor_edit", "recordSelector": ":scope > .model_list", "addAction": { "text": "添加荣誉" } },
+      { "kind": "certificates", "title": "证书", "selector": ".certificate_edit", "recordSelector": ":scope > .model_list", "addAction": { "text": "添加证书" } }
+    ]
+  }
+}

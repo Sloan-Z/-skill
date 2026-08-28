@@ -1,0 +1,15 @@
+backend/node_modules/
+backend/.edge-profile/
+edge-profile/
+resume.json
+resume.*.json
+*.pdf
+*.doc
+*.docx
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.log
+.env
+.env.*

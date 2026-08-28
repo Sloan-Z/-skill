@@ -1,0 +1,8 @@
+interface:
+  display_name: "招聘简历填写助手"
+  short_description: "解析简历、安全填写招聘官网并补全缺失字段"
+  brand_color: "#2563EB"
+  default_prompt: "使用 $resume-form-filler 解析我提供的简历并生成待确认的结构化 JSON，准备招聘官网填写预览；首轮后主动收集真正缺失的字段并更新草稿。"
+
+policy:
+  allow_implicit_invocation: true

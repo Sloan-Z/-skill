@@ -1,0 +1,31 @@
+{
+  "domain": "agirobot.jobs.feishu.cn",
+  "formSignature": "feishu-resume",
+  "mappedAt": "2026-08-27",
+  "dynamicSections": true,
+  "sectionLocator": {
+    "strategy": "module-title",
+    "container": ".applyFormModuleWrapper-windows",
+    "title": ".applyFormModuleWrapper-title",
+    "addButtonText": "添加",
+    "recordContainer": "[class*='apply-form-array-card__']"
+  },
+  "fieldLocator": {
+    "strategy": "feishu-field",
+    "container": ".ud-formily-item[data-form-field-name][data-form-field-i18n-name]",
+    "fieldNameAttribute": "data-form-field-name",
+    "labelAttribute": "data-form-field-i18n-name",
+    "controlIndex": "within-field"
+  },
+  "fields": [
+    { "label": "姓名", "section": "basic", "resumePath": "basic.name", "method": "text" },
+    { "label": "邮箱", "section": "basic", "resumePath": "basic.email", "method": "text" },
+    { "label": "学校名称", "section": "education", "resumePath": "education[].school", "method": "text" },
+    { "label": "学历", "section": "education", "resumePath": "education[].degree", "method": "select", "requiresConfirmation": true },
+    { "label": "专业", "section": "education", "resumePath": "education[].major", "method": "text" },
+    { "label": "公司名称", "section": "work", "resumePath": "workExperience[].company", "method": "text" },
+    { "label": "职位名称", "section": "work", "resumePath": "workExperience[].title", "method": "text" },
+    { "label": "项目名称", "section": "project", "resumePath": "projectExperience[].name", "method": "text" },
+    { "label": "描述", "section": "project", "resumePath": "projectExperience[].description", "method": "text" }
+  ]
+}

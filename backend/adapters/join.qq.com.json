@@ -1,0 +1,28 @@
+{
+  "domain": "join.qq.com",
+  "formSignature": "tencent-element-resume-v1",
+  "framework": "element-ui",
+  "mappedAt": "2026-08-28",
+  "fingerprints": [
+    { "selector": ".send_list .send_box", "minCount": 5 },
+    { "selector": ".info_box", "minCount": 5 }
+  ],
+  "reader": {
+    "sectionContainer": ".send_list > .send_box",
+    "sectionTitleSelector": ":scope > .send_title",
+    "fieldSelector": ".info_box",
+    "labelSelector": [".subtitle", ".subtitleBold", "label"],
+    "controlSelector": "input:not([type='hidden']), textarea, select, [role='combobox']",
+    "selectSelector": [".el-select", ".select"],
+    "dateSelector": [".el-date-editor", "[class*='date']"],
+    "dateRangeSelector": [".date_box", ".el-date-editor--daterange"],
+    "sections": [
+      { "kind": "attachment", "title": "简历附件", "titleMatches": "简历附件", "selector": ".send_list > .send_box" },
+      { "kind": "basic", "title": "基础信息", "titleMatches": "基础信息", "selector": ".send_list > .send_box" },
+      { "kind": "education", "title": "教育经历", "titleMatches": "教育经历", "selector": ".send_list > .send_box", "recordSelector": ":scope .experience_box", "addAction": { "text": "添加学历" } },
+      { "kind": "work", "title": "实习经历", "titleMatches": "实习经历", "selector": ".send_list > .send_box", "recordSelector": ":scope .experience_box > .info_list", "addAction": { "text": "添加实习经历" } },
+      { "kind": "project", "title": "项目经历", "titleMatches": "项目经历", "selector": ".send_list > .send_box", "recordSelector": ":scope .experience_box > .info_list", "addAction": { "text": "添加项目经历" } },
+      { "kind": "awards", "title": "获奖信息", "titleMatches": "获奖信息", "selector": ".send_list > .send_box", "recordSelector": ":scope .experience_box > .info_list", "addAction": { "text": "添加获奖信息" } }
+    ]
+  }
+}

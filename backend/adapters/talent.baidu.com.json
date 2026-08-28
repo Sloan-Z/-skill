@@ -1,0 +1,27 @@
+{
+  "domain": "talent.baidu.com",
+  "formSignature": "baidu-brick-resume-v1",
+  "framework": "baidu-brick-react",
+  "mappedAt": "2026-08-28",
+  "fingerprints": [
+    { "selector": "[class*='resume-page__'], .resume-page", "minCount": 1 },
+    { "selector": ".brick-field", "minCount": 1 }
+  ],
+  "reader": {
+    "fieldSelector": ".brick-field",
+    "labelSelector": [".brick-field-label", "label"],
+    "controlSelector": "input:not([type='hidden']), textarea, select, [role='combobox'], [role='radio'], [role='checkbox']",
+    "selectSelector": [".brick-select", ".brick-cascader"],
+    "dateSelector": [".brick-date-picker"],
+    "dateRangeSelector": [".brick-range-picker"],
+    "sections": [
+      { "kind": "attachment", "title": "附件简历", "selector": "#resume-upload-info" },
+      { "kind": "basic", "title": "基础信息", "selector": "#resume-base-info" },
+      { "kind": "education", "title": "教育经历", "selector": "#resume-edu-info", "recordSelector": ":scope > div:has(.brick-field)", "addAction": { "text": "添加教育经历" } },
+      { "kind": "work", "title": "工作经历", "selector": "#resume-work-info", "recordSelector": ":scope > div:has(.brick-field)", "addAction": { "text": "添加工作经历" } },
+      { "kind": "project", "title": "项目经验", "selector": "#resume-project-info", "recordSelector": ":scope > div:has(.brick-field)", "addAction": { "text": "添加项目经历" } },
+      { "kind": "awards", "title": "获奖信息", "selector": "#resume-award-info", "recordSelector": ":scope > div:has(.brick-field)", "addAction": { "text": "添加获奖信息" } },
+      { "kind": "portfolio", "title": "作品集", "selector": "#resume-portfolio-info" }
+    ]
+  }
+}

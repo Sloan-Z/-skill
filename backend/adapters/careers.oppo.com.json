@@ -1,0 +1,40 @@
+{
+  "domain": "careers.oppo.com",
+  "formSignature": "oppo-element-section-editor-v1",
+  "framework": "element-plus-vue",
+  "mappedAt": "2026-08-28",
+  "fingerprints": [
+    { "selector": ".van-tab__panel.resume-item", "minCount": 5 },
+    { "selector": ".module-title", "minCount": 5 }
+  ],
+  "reader": {
+    "editorMode": "section-editor",
+    "sectionTitleSelector": ".module-title__left, .module-title",
+    "editorSelector": "[class*='layout-edit']",
+    "fieldSelector": ".el-form-item",
+    "labelSelector": [".el-form-item__label", "label"],
+    "controlSelector": "input:not([type='hidden']), textarea, select, [role='combobox']",
+    "selectSelector": [".el-select", ".cascade-select", ".dic-select"],
+    "dateSelector": [".el-date-editor"],
+    "dateRangeSelector": [".el-date-editor--daterange", ".date-range"],
+    "editorAction": { "selector": ".module-title__edit", "waitMs": 250 },
+    "sections": [
+      { "kind": "basic", "title": "基础信息", "titleMatches": "基础信息", "selector": ".van-tab__panel.resume-item" },
+      { "kind": "education", "title": "教育经历", "titleMatches": "教育经历", "selector": ".van-tab__panel.resume-item", "recordSelector": ".layout-edit--list__item", "addAction": { "text": "+添加" } },
+      { "kind": "family", "title": "是否有OPPO亲属", "titleMatches": "是否有OPPO亲属必填没有有", "selector": ".van-tab__panel.resume-item", "inline": true },
+      { "kind": "work", "title": "工作/实习经历", "titleMatches": "工作/实习经历", "selector": ".van-tab__panel.resume-item", "recordSelector": ".layout-edit--list__item", "addAction": { "text": "+添加" } },
+      { "kind": "project", "title": "项目经历", "titleMatches": "项目经历", "selector": ".van-tab__panel.resume-item", "recordSelector": ".layout-edit--list__item", "addAction": { "text": "+添加" } },
+      { "kind": "campus", "title": "学生干部经历", "titleMatches": "学生干部经历", "selector": ".van-tab__panel.resume-item", "recordSelector": ".layout-edit--list__item", "addAction": { "text": "+添加" } },
+      { "kind": "campus", "title": "校内活动", "titleMatches": "校内活动", "selector": ".van-tab__panel.resume-item", "recordSelector": ".layout-edit--list__item", "addAction": { "text": "+添加" } },
+      { "kind": "language", "title": "语言能力", "titleMatches": "语言能力", "selector": ".van-tab__panel.resume-item" },
+      { "kind": "skills", "title": "其他技能/证书", "titleMatches": "其他技能/证书", "selector": ".van-tab__panel.resume-item" },
+      { "kind": "portfolio", "title": "作品", "titleMatches": "作品", "selector": ".van-tab__panel.resume-item" },
+      { "kind": "awards", "title": "竞赛/获奖经历", "titleMatches": "竞赛/获奖经历", "selector": ".van-tab__panel.resume-item" },
+      { "kind": "contact", "title": "紧急联系人", "titleMatches": "紧急联系人", "selector": ".van-tab__panel.resume-item" }
+    ]
+  },
+  "handoff": {
+    "savePolicy": "user-only",
+    "reason": "每个分区通过编辑器内的保存按钮关闭；Agent 填写后必须由用户检查并手动保存，再继续下一个分区。"
+  }
+}
