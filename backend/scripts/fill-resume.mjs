@@ -185,7 +185,7 @@ async function main() {
     const initialForm = await readPageForm(page);
     const feishu = isFeishuResumePage(initialForm);
     const adapter = feishu || forceGeneric ? null : await loadSiteAdapter(initialForm.url);
-    const generic = !feishu && !adapter;
+    let generic = !feishu && !adapter;
     const phoenix = adapter?.framework === 'beisen-phoenix';
     const sectionEditor = adapter?.reader?.editorMode === 'section-editor';
     if (sectionEditor && !sectionOption) {
@@ -199,7 +199,15 @@ async function main() {
     else if (sectionEditor) {
       form = await openSemanticSection(page, adapter, sectionOption);
       openedSection = true;
-    } else form = await readSemanticForm(page, adapter);
+    } else {
+      try {
+        form = await readSemanticForm(page, adapter);
+      } catch (error) {
+        console.log(`适配器读取失败，已降级到通用发现：${error.message}`);
+        generic = true;
+        form = await readGenericForm(page);
+      }
+    }
 
     // Apply mode needs a local, action-time review of the exact values that
     // would be transmitted. Ordinary previews remain value-free by default.

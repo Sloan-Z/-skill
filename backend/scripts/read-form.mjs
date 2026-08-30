@@ -45,7 +45,7 @@ async function readForm() {
     const baseForm = await readPageForm(page, { includeValues });
     const feishu = isFeishuResumePage(baseForm);
     const adapter = feishu || forceGeneric ? null : await loadSiteAdapter(baseForm.url);
-    const generic = !feishu && !adapter;
+    let generic = !feishu && !adapter;
     let openedSection = false;
     let form;
     if (feishu) form = await readFeishuForm(page, { includeValues });
@@ -54,7 +54,15 @@ async function readForm() {
     else if (sectionOption && adapter.reader?.editorMode === 'section-editor') {
       form = await openSemanticSection(page, adapter, sectionOption);
       openedSection = true;
-    } else form = await readSemanticForm(page, adapter, { includeValues });
+    } else {
+      try {
+        form = await readSemanticForm(page, adapter, { includeValues });
+      } catch (error) {
+        console.log(`适配器读取失败，已降级到通用发现：${error.message}`);
+        generic = true;
+        form = await readGenericForm(page, { includeValues });
+      }
+    }
     console.log(`📄 当前页面: ${form.title} | ${form.url}`);
     console.log(`\n🔍 找到 ${form.fields.length} 个可交互元素:\n`);
     console.log(JSON.stringify(form, null, 2));

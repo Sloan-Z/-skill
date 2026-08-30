@@ -60,7 +60,7 @@ async function main() {
     const initialForm = await readPageForm(page);
     const feishu = isFeishuResumePage(initialForm);
     const adapter = feishu || forceGeneric ? null : await loadSiteAdapter(initialForm.url);
-    const generic = !feishu && !adapter;
+    let generic = !feishu && !adapter;
     const phoenix = adapter?.framework === 'beisen-phoenix';
     let openedSection = false;
     let form;
@@ -70,7 +70,15 @@ async function main() {
     else if (sectionOption && adapter.reader?.editorMode === 'section-editor') {
       form = await openSemanticSection(page, adapter, sectionOption);
       openedSection = true;
-    } else form = await readSemanticForm(page, adapter, { includeValues: showValues });
+    } else {
+      try {
+        form = await readSemanticForm(page, adapter, { includeValues: showValues });
+      } catch (error) {
+        console.log(`适配器读取失败，已降级到通用发现：${error.message}`);
+        generic = true;
+        form = await readGenericForm(page, { includeValues: showValues });
+      }
+    }
     const mappings = feishu
       ? planFeishuMappings(form, resume, { showValues })
       : phoenix
