@@ -9,12 +9,14 @@ import { connectToBrowser, disconnectFromBrowser, findPage } from './lib/cdp.mjs
 import { readPageForm } from './lib/form-reader.mjs';
 import { isFeishuResumePage, readFeishuForm } from './lib/feishu-form-reader.mjs';
 import { loadSiteAdapter } from './lib/site-adapters.mjs';
+import { readGenericForm } from './lib/generic-form-reader.mjs';
 import { closeSemanticSection, openSemanticSection, readSemanticForm } from './lib/semantic-form-reader.mjs';
 
 const args = process.argv.slice(2);
 const targetUrl = args.find((arg) => !arg.startsWith('-'));
 const includeValues = args.includes('--include-values');
 const navigate = args.includes('--navigate');
+const forceGeneric = args.includes('--generic');
 const sectionOption = (() => {
   const index = args.indexOf('--section');
   return index >= 0 ? args[index + 1] : undefined;
@@ -42,11 +44,13 @@ async function readForm() {
 
     const baseForm = await readPageForm(page, { includeValues });
     const feishu = isFeishuResumePage(baseForm);
-    const adapter = feishu ? null : await loadSiteAdapter(baseForm.url);
+    const adapter = feishu || forceGeneric ? null : await loadSiteAdapter(baseForm.url);
+    const generic = !feishu && !adapter;
     let openedSection = false;
     let form;
     if (feishu) form = await readFeishuForm(page, { includeValues });
-    else if (!adapter || adapter.framework === 'beisen-phoenix') form = baseForm;
+    else if (generic) form = await readGenericForm(page, { includeValues });
+    else if (adapter.framework === 'beisen-phoenix') form = baseForm;
     else if (sectionOption && adapter.reader?.editorMode === 'section-editor') {
       form = await openSemanticSection(page, adapter, sectionOption);
       openedSection = true;

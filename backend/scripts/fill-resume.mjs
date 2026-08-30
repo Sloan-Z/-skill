@@ -24,6 +24,8 @@ import {
   summarizeFeishuMappings,
 } from './lib/feishu-resume-mapper.mjs';
 import { loadSiteAdapter } from './lib/site-adapters.mjs';
+import { expandGenericSections, readGenericForm } from './lib/generic-form-reader.mjs';
+import { planGenericMappings, summarizeGenericMappings } from './lib/generic-resume-mapper.mjs';
 import {
   closeSemanticSection,
   expandSemanticSections,
@@ -57,6 +59,9 @@ function createPrompt() {
 }
 
 async function locateMapping(page, mapping) {
+  if (mapping.locator?.strategy === 'generic-control') {
+    return page.locator(mapping.locator.selector).first();
+  }
   if (mapping.locator?.strategy === 'feishu-field') {
     const module = page.locator('.applyFormModuleWrapper-windows').nth(mapping.locator.sectionIndex);
     const isArray = ['education', 'work', 'project', 'portfolio', 'awards', 'language'].includes(mapping.locator.sectionKind);
@@ -139,7 +144,7 @@ async function fillMapping(page, mapping) {
     await options[0].click();
     const selected = await control.evaluate((element) => ({
       value: element.value || element.getAttribute('aria-valuetext') || '',
-      fieldText: element.closest('[data-form-field-name]')?.textContent || '',
+      fieldText: element.closest('[data-form-field-name], [data-field], [role="combobox"], [class*="select"], [class*="picker"]')?.textContent || '',
     }));
     if (String(selected.value).trim() !== String(value).trim()
       && !String(selected.fieldText).replace(/\s+/g, '').includes(String(value).replace(/\s+/g, ''))) {
@@ -162,6 +167,7 @@ async function main() {
   const apply = args.includes('--apply');
   const showValues = args.includes('--show-values');
   const sectionOption = getOption(args, '--section');
+  const forceGeneric = args.includes('--generic');
 
   if (apply && !process.stdin.isTTY) {
     throw new Error('--apply 需要在交互式终端中运行，以便确认填写范围');
@@ -178,8 +184,8 @@ async function main() {
     const page = findPage(pages, { targetUrl });
     const initialForm = await readPageForm(page);
     const feishu = isFeishuResumePage(initialForm);
-    const adapter = feishu ? null : await loadSiteAdapter(initialForm.url);
-    if (!feishu && !adapter) throw new Error(`当前页面没有已安装的招聘表单适配器: ${initialForm.url}`);
+    const adapter = feishu || forceGeneric ? null : await loadSiteAdapter(initialForm.url);
+    const generic = !feishu && !adapter;
     const phoenix = adapter?.framework === 'beisen-phoenix';
     const sectionEditor = adapter?.reader?.editorMode === 'section-editor';
     if (sectionEditor && !sectionOption) {
@@ -188,6 +194,7 @@ async function main() {
     let openedSection = false;
     let form;
     if (feishu) form = await readFeishuForm(page);
+    else if (generic) form = await readGenericForm(page);
     else if (phoenix) form = initialForm;
     else if (sectionEditor) {
       form = await openSemanticSection(page, adapter, sectionOption);
@@ -200,14 +207,16 @@ async function main() {
       ? planFeishuMappings(form, resume, { showValues: showValues || apply })
       : phoenix
         ? mapVivoForm(form, resume, { showValues: showValues || apply })
-        : planSemanticMappings(form, resume, { showValues: showValues || apply });
+        : generic
+          ? planGenericMappings(form, resume, { showValues: showValues || apply })
+          : planSemanticMappings(form, resume, { showValues: showValues || apply });
     const actionable = mappings.filter((item) => ['ready', 'needs-confirmation'].includes(item.status));
     console.log(`页面: ${form.title}`);
     console.log(`简历数据: status=${resumeValidation.summary.status} warnings=${resumeValidation.warnings.length}`);
     if (resume.status === 'draft') console.log('注意：当前为未确认草稿，只允许预览；--apply 会被拒绝。');
     const summary = feishu
       ? summarizeFeishuMappings(mappings)
-      : phoenix ? summarizeMappings(mappings) : summarizeSemanticMappings(mappings);
+      : phoenix ? summarizeMappings(mappings) : generic ? summarizeGenericMappings(mappings) : summarizeSemanticMappings(mappings);
     console.log(`控件: ${form.fields.length} | 映射: ${JSON.stringify(summary)}`);
     if (feishu || !phoenix) {
       const required = feishu ? requiredFeishuRecordCounts(resume) : requiredSemanticRecordCounts(resume);
@@ -251,6 +260,10 @@ async function main() {
       const required = requiredFeishuRecordCounts(resume);
       form = await expandFeishuSections(page, form, required);
       mappings = mapFeishuForm(form, resume, { showValues: true });
+    } else if (generic) {
+      const required = requiredSemanticRecordCounts(resume);
+      form = await expandGenericSections(page, form, required);
+      mappings = planGenericMappings(form, resume, { showValues: true });
     } else if (!phoenix) {
       const required = requiredSemanticRecordCounts(resume);
       form = await expandSemanticSections(page, form, adapter, required);

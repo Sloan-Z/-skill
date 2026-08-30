@@ -11,7 +11,7 @@
     "map": "node scripts/map-resume.mjs",
     "fill-resume": "node scripts/fill-resume.mjs",
     "fill": "node scripts/fill-field.mjs",
-    "test": "node scripts/tests/adapters.test.mjs && node scripts/tests/semantic-mapper.test.mjs && node scripts/tests/feishu-feedback.test.mjs",
+    "test": "node scripts/tests/adapters.test.mjs && node scripts/tests/semantic-mapper.test.mjs && node scripts/tests/generic-mapper.test.mjs && node scripts/tests/feishu-feedback.test.mjs",
     "dev": "msedge --remote-debugging-port=9222 --user-data-dir=\".edge-profile\""
   },
   "dependencies": {

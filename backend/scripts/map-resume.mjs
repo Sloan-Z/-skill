@@ -20,6 +20,8 @@ import {
   summarizeFeishuMappings,
 } from './lib/feishu-resume-mapper.mjs';
 import { loadSiteAdapter } from './lib/site-adapters.mjs';
+import { readGenericForm } from './lib/generic-form-reader.mjs';
+import { planGenericMappings, summarizeGenericMappings } from './lib/generic-resume-mapper.mjs';
 import {
   closeSemanticSection,
   openSemanticSection,
@@ -43,6 +45,7 @@ const targetUrl = getOption(args, '--url') || args.find((arg) => !arg.startsWith
 const resumePath = getOption(args, '--resume') || process.env.RESUME_PATH || DEFAULT_RESUME_PATH;
 const showValues = args.includes('--show-values');
 const jsonOnly = args.includes('--json');
+const forceGeneric = args.includes('--generic');
 const sectionOption = getOption(args, '--section');
 
 async function main() {
@@ -56,12 +59,13 @@ async function main() {
     const page = findPage(pages, { targetUrl });
     const initialForm = await readPageForm(page);
     const feishu = isFeishuResumePage(initialForm);
-    const adapter = feishu ? null : await loadSiteAdapter(initialForm.url);
-    if (!feishu && !adapter) throw new Error(`当前页面没有已安装的招聘表单适配器: ${initialForm.url}`);
+    const adapter = feishu || forceGeneric ? null : await loadSiteAdapter(initialForm.url);
+    const generic = !feishu && !adapter;
     const phoenix = adapter?.framework === 'beisen-phoenix';
     let openedSection = false;
     let form;
     if (feishu) form = await readFeishuForm(page, { includeValues: showValues });
+    else if (generic) form = await readGenericForm(page, { includeValues: showValues });
     else if (phoenix) form = await readPageForm(page, { includeValues: showValues });
     else if (sectionOption && adapter.reader?.editorMode === 'section-editor') {
       form = await openSemanticSection(page, adapter, sectionOption);
@@ -71,7 +75,9 @@ async function main() {
       ? planFeishuMappings(form, resume, { showValues })
       : phoenix
         ? mapVivoForm(form, resume, { showValues })
-        : planSemanticMappings(form, resume, { showValues });
+        : generic
+          ? planGenericMappings(form, resume, { showValues })
+          : planSemanticMappings(form, resume, { showValues });
     const output = {
       generatedAt: new Date().toISOString(),
       cdpUrl,
@@ -79,7 +85,7 @@ async function main() {
       resumeValidation: resumeValidation.summary,
       summary: feishu
         ? summarizeFeishuMappings(mappings)
-        : phoenix ? summarizeMappings(mappings) : summarizeSemanticMappings(mappings),
+        : phoenix ? summarizeMappings(mappings) : generic ? summarizeGenericMappings(mappings) : summarizeSemanticMappings(mappings),
       mappings,
       missingFieldReport: buildMissingFieldReport(resume, mappings),
     };
@@ -117,8 +123,8 @@ async function main() {
     for (const item of mappings) {
       const location = feishu
         ? `${item.sectionKind}[${item.recordIndex}]/${item.fieldName}[${item.controlIndex}]`
-        : phoenix
-          ? item.formItemIndex == null ? item.fieldId : `form-item[${item.formItemIndex}]`
+          : phoenix
+            ? item.formItemIndex == null ? item.fieldId : `form-item[${item.formItemIndex}]`
           : `${item.sectionKind}[${item.recordIndex}]/${item.label || item.fieldId}`;
       const value = showValues && item.valuePreview !== undefined ? ` = ${item.valuePreview}` : '';
       console.log(`${item.status.padEnd(18)} ${location.padEnd(18)} ${item.label || '(无标签)'}${value}${item.reason ? ` | ${item.reason}` : ''}`);
@@ -128,6 +134,7 @@ async function main() {
     for (const question of missing.questions.filter((item) => item.source === 'page')) {
       console.log(`- ${question.persistence} | ${question.path || question.label} | ${question.prompt}`);
     }
+    if (generic) console.log('未使用站点适配器：已启用通用发现。低置信度、动态添加、日期和复杂组件会标记为人工确认。');
     if (adapter?.reader?.editorMode === 'section-editor' && !sectionOption) {
       console.log('该站点按分区打开编辑器。使用 --section basic|education|work|project 等读取单个分区。');
     }
