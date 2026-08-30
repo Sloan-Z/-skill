@@ -17,6 +17,13 @@ npm install --prefix "$env:USERPROFILE\.codex\skills\resume-form-filler\backend"
 
 WorkBuddy 或其他 Agent 可加载根目录的 `SKILL.md`，并调用 `backend/scripts` 下的 Node 后端。
 
+项目管理材料：
+
+- [PROJECT_MANAGEMENT.md](PROJECT_MANAGEMENT.md)：当前能力、边界、风险和量化目标
+- [docs/ROADMAP.md](docs/ROADMAP.md)：分阶段实现规划
+- [docs/TEST_PLAN.md](docs/TEST_PLAN.md)：测试矩阵与发布门禁
+- [docs/DECISIONS.md](docs/DECISIONS.md)：关键架构决策
+
 未收录的网站无需先添加适配器。直接运行通用预览即可：
 
 ```powershell
